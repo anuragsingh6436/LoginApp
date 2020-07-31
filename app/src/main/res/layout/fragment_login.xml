@@ -50,12 +50,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_password"
-                    android:text="@{userViewModelLogin.inputPassword}"
+                    android:text="@={userViewModelLogin.inputPassword}"
                     android:inputType="text"
                     android:maxLines="1"
                     android:textColor="@android:color/white"/>
             </com.google.android.material.textfield.TextInputLayout>
-
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/appCompatButtonLogin"

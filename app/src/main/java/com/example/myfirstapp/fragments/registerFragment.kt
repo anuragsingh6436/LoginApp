@@ -38,9 +38,10 @@ class registerFragment : Fragment(),View.OnClickListener {
         userViewModelRegister = ViewModelProvider(this).get(UserViewModelRegister::class.java)
         inputValidation = context?.let { InputValidation(it) }!!
         binding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_register, container, false);
+            inflater, R.layout.fragment_register, container, false)
+
+        binding.userViewModelRegister = userViewModelRegister
         userViewModelRegister.checkUser.observe(viewLifecycleOwner, Observer { users ->
-            Log.d("fragment","checkUser")
             users?.let {
                 if (it) {
                     Snackbar.make(
@@ -80,21 +81,14 @@ class registerFragment : Fragment(),View.OnClickListener {
         if(!inputValidation.isInputEditTextFilled(binding.textInputEditTextCity,binding.textInputLayoutCity,getString(R.string.error_message_city))) {
             return
         }
-        var inputEmail = binding.textInputEditTextEmail.text.toString()
-
-        userViewModelRegister.findByEmail(inputEmail)
+        userViewModelRegister.findByEmail()
     }
 
     private fun postRoomDataBase() {
-        var userRoom = UserEntity(1,binding.textInputEditTextName.text.toString().trim(),
-            email = binding.textInputEditTextEmail.text.toString().trim(),
-            password = binding.textInputEditTextPassword.text.toString().trim(),
-            city = binding.textInputEditTextCity.text.toString().trim(),
-            gender = gender);
-        userViewModelRegister.insert(userRoom)
+        userViewModelRegister.insert()
         Snackbar.make(binding.nestedScrollView, getString(R.string.success_message), Snackbar.LENGTH_LONG).show()
         var bundle = Bundle()
-        bundle.putString("email",binding.textInputEditTextEmail.text.toString().trim { it <= ' ' })
+        bundle.putString("email",userViewModelRegister.email.value!!)
         emptyInputEditText()
         val accountsIntent = Intent(context, UsersListActivity::class.java)
         accountsIntent.putExtras(bundle)
@@ -102,11 +96,12 @@ class registerFragment : Fragment(),View.OnClickListener {
     }
 
     private fun emptyInputEditText() {
-        binding.textInputEditTextName.text = null
-        binding.textInputEditTextEmail.text = null
-        binding.textInputEditTextPassword.text = null
-        binding.textInputEditTextConfirmPassword.text = null
-        binding.textInputEditTextCity.text  = null
+        userViewModelRegister.name.value = null
+        userViewModelRegister.email.value = null
+        userViewModelRegister.password.value = null
+        userViewModelRegister.confirmPassword.value = null
+        userViewModelRegister.radioChecked = null
+        userViewModelRegister.city.value = null
     }
 //    private fun onRadioButtonClicked(view:View) {
 //        Log.d("fragment","inside radio Button")
@@ -138,12 +133,10 @@ class registerFragment : Fragment(),View.OnClickListener {
                     fragmentTransaction.commit()
                 }
                 R.id.maleRadio -> {
-                    Log.d("fragment","male")
-                    gender = "male"
+                    userViewModelRegister.radioChecked = "male"
                 }
                 R.id.femaleRadio -> {
-                    Log.d("fragment","female")
-                    gender = "female"
+                    userViewModelRegister.radioChecked = "female"
                 }
             }
         }

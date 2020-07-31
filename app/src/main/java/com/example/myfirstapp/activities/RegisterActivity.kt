@@ -69,18 +69,11 @@ class RegisterActivity : AppCompatActivity(){
         if(!inputValidation.isInputEditTextFilled(binding.textInputEditTextCity,binding.textInputLayoutCity,getString(R.string.error_message_city))) {
             return
         }
-        var inputEmail = binding.textInputEditTextEmail.text.toString()
-
-         userViewModelRegister.findByEmail(inputEmail)
+         userViewModelRegister.findByEmail()
     }
 
     private fun postRoomDataBase() {
-        var userRoom = UserEntity(1,binding.textInputEditTextName.text.toString().trim(),
-            email = binding.textInputEditTextEmail.text.toString().trim(),
-            password = binding.textInputEditTextPassword.text.toString().trim(),
-            city = binding.textInputEditTextCity.text.toString().trim(),
-            gender = gender);
-        userViewModelRegister.insert(userRoom)
+        userViewModelRegister.insert()
         Snackbar.make(binding.nestedScrollView, getString(R.string.success_message), Snackbar.LENGTH_LONG).show()
         var bundle = Bundle()
         bundle.putString("email",binding.textInputEditTextEmail.text.toString().trim { it <= ' ' })

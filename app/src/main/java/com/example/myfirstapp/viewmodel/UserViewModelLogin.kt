@@ -6,10 +6,12 @@ import androidx.databinding.BaseObservable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import com.example.myfirstapp.Repository.UserRepository
 import com.example.myfirstapp.Room.UserEntity
 import com.example.myfirstapp.Room.UserRoomDatabase
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 class UserViewModelLogin(application: Application) :AndroidViewModel(application) {
@@ -25,11 +27,10 @@ class UserViewModelLogin(application: Application) :AndroidViewModel(application
         repository = UserRepository(userDao)
         userInfo = repository.userinfo
     }
-    fun findByEmail(email:String,password:String) = viewModelScope.launch(Dispatchers.IO) {
-        usersList = repository.findByEmail(email)
+    fun findByEmail() = viewModelScope.launch(Dispatchers.IO) {
+        usersList = repository.findByEmail(inputEmail.value!!)
         if(usersList.isNotEmpty()) {
-            Log.d("fragment",usersList[0].name)
-            if(usersList[0].email == email && usersList[0].password == password) {
+            if(usersList[0].email == inputEmail.value!! && usersList[0].password == inputPassword.value!!) {
                 checkUser.postValue(true)
             }
             else {

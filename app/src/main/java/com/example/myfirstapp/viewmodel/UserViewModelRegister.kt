@@ -18,19 +18,32 @@ class UserViewModelRegister(application: Application) : AndroidViewModel(applica
     var userInfo: LiveData<List<UserEntity>>
     var checkUser = MutableLiveData<Boolean>()
 
+    var email = MutableLiveData<String>()
+    var password = MutableLiveData<String>()
+    var name = MutableLiveData<String>()
+    var city = MutableLiveData<String>()
+    var radioChecked : String?=null
+    var confirmPassword = MutableLiveData<String>()
+
     init {
         val userDao = UserRoomDatabase.getDatabase(application,viewModelScope).userDao()
         repository = UserRepository(userDao)
         userInfo = repository.userinfo
     }
 
-    fun insert(user: UserEntity) = viewModelScope.launch(Dispatchers.IO) {
-        repository.insert(user)
+    fun insert() = viewModelScope.launch(Dispatchers.IO) {
+        var userRoom = UserEntity(1,name.value!!,
+            email =email.value!!,
+            password = password.value!!,
+            city = city.value!!,
+            gender = radioChecked!!);
+        println(userRoom)
+        repository.insert(userRoom)
     }
-    fun findByEmail(email:String) = viewModelScope.launch(Dispatchers.IO) {
-        usersList = repository.findByEmail(email)
+    fun findByEmail() = viewModelScope.launch(Dispatchers.IO) {
+        usersList = repository.findByEmail(email.value!!)
         if(usersList.isNotEmpty()) {
-            if(usersList[0].email == email) {
+            if(usersList[0].email == email.value!!) {
                 checkUser.postValue(true)
             }
             else {

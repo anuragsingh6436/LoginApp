@@ -54,9 +54,7 @@ class LoginActivity : AppCompatActivity(){
                 binding.textInputLayoutPassword, getString(R.string.error_message_email))) {
             return
         }
-        var inputEmail = binding.textInputEditTextEmail.text.toString()
-        var inputPassword  = binding.textInputEditTextPassword.text.toString()
-        userViewModelLogin.findByEmail(inputEmail,inputPassword)
+        userViewModelLogin.findByEmail()
     }
     private fun userActivityRedirect() {
         val accountsIntent = Intent(activity, UsersListActivity::class.java)

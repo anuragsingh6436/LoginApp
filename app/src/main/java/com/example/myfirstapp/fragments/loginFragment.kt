@@ -2,7 +2,6 @@ package com.example.myfirstapp.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,6 @@ import com.example.myfirstapp.databinding.FragmentLoginBinding
 import com.example.myfirstapp.helpers.InputValidation
 import com.example.myfirstapp.viewmodel.UserViewModelLogin
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_main.view.*
 
 
 class loginFragment : Fragment() ,View.OnClickListener {
@@ -35,12 +33,12 @@ class loginFragment : Fragment() ,View.OnClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         userViewModelLogin = ViewModelProvider(this).get(UserViewModelLogin::class.java)
         inputValidation = context?.let { InputValidation(it) }!!
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_login, container, false);
         initListeners()
+        binding.userViewModelLogin = userViewModelLogin
         userViewModelLogin.checkUser.observe(viewLifecycleOwner, Observer { users ->
             users?.let {
                 if(it) {
@@ -72,22 +70,20 @@ class loginFragment : Fragment() ,View.OnClickListener {
                 binding.textInputLayoutPassword, getString(R.string.error_message_email))) {
             return
         }
-        var inputEmail = binding.textInputEditTextEmail.text.toString()
-        var inputPassword  = binding.textInputEditTextPassword.text.toString()
-        userViewModelLogin.findByEmail(inputEmail,inputPassword)
+        userViewModelLogin.findByEmail()
 
     }
     private fun userActivityRedirect() {
         val accountsIntent = Intent(context, UsersListActivity::class.java)
         var bundle = Bundle()
-        bundle.putString("email",binding.textInputEditTextEmail.text.toString().trim { it <= ' ' })
+        bundle.putString("email",userViewModelLogin.inputEmail.value!!)
         emptyInputEditText()
         accountsIntent.putExtras(bundle)
         startActivity(accountsIntent)
     }
     private fun emptyInputEditText() {
-        binding.textInputEditTextEmail.text = null
-        binding.textInputEditTextPassword.text = null
+        userViewModelLogin.inputEmail.value = null
+        userViewModelLogin.inputPassword.value = null
     }
 
     override fun onClick(v: View?) {
